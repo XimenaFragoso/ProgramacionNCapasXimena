@@ -36,13 +36,13 @@
                         <button type="submit" class="btn btn-white text-white" id="cargaMasiva">Cargar Archivo</button>
                     </form>
                 </div>  
-                <div th:if="${archivoCorrecto!= null}">
+                <div th:if="${listaErrores!= null}">
                     <div th:if="${listaErrores.isEmpty()}">
-                        <h3>Archivo correcto: </h3>
-                        <a th:href="@{/Usuario/GargaMasiva/procesar}" class="btn btn-success">Procesar</a> 
+                        <h3> ¡Archivo correcto! (: </h3>
+                        <a th:href="@{/Usuario/CargaMasiva/procesar}" class="btn btn-warning">Procesar</a> 
                     </div>
-                    <div th:unless="${listaErrores.isEmpty(}">
-                        <h3>Archivo incorrecto: </h3>
+                    <div th:unless="${listaErrores.isEmpty()}">
+                        <h3 class = "pt-4 text-center pb-4"> --- Archivo incorrecto ---</h3>
                         <table class="table table-responsive">
                             <thead class="table-dark">
                             <th class="col-2">Linea</th>
@@ -50,10 +50,10 @@
                             <th>Error</th>
                             </thead>
                             <tbody>
-                                <tr th:each="error: :${listaErrores}">
-                                    <td th:text="${error.fila}"></td>
-                                    <td th:text="${error.texto}"></td>
-                                    <td th:text="${error.descripcionError}"></td>
+                                <tr th:each="error: ${listaErrores}">
+                                    <td th:text="${error.Fila}"></td>
+                                    <td th:text="${error.Mensaje}"></td>
+                                    <td th:text="${error.Descripcion}"></td>
 
                                 </tr>
                             </tbody>

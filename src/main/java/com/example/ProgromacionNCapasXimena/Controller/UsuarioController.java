@@ -90,29 +90,32 @@ public class UsuarioController {
         return "CargaMasiva";
     }
 
+    
+    
+    
     @PostMapping("/CargaMasiva")
     public String CargaMasiva(@RequestParam MultipartFile archivo, Model model, HttpSession session) {
         try {
 
             if (archivo != null && !archivo.isEmpty()) { //Sirve para que el archivo no este nulo ni esté vacio
-                
+
                 String tipoArchivo = archivo.getOriginalFilename().split("\\.")[1];
-                
+
                 String root = System.getProperty("user.dir"); //Obtiene la direccion del proyecto de la computadora
                 String path = "src/main/resources/static/archivos"; //Guarda internamente la direccion del proyecto
                 String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmSS"));
                 String absolutePath = root + "/" + path + "/" + fecha + archivo.getOriginalFilename();
                 //se guarda en AbsolutePath
                 archivo.transferTo(new File(absolutePath));
-                
+
                 //Leer archivo 
                 List<UsuarioDireccion> listaUsuarios = new ArrayList();
-                if(tipoArchivo.equals("txt")){
+                if (tipoArchivo.equals("txt")) {
                     listaUsuarios = LecturaArchivoTXT(new File(absolutePath)); //Metodo que sirve para ller la lista                    
                 } else {
                     listaUsuarios = LecturaArchivoExcel(new File(absolutePath));
                 }
-                
+
                 //Validar Archivo 
                 List<ResultFile> listaErrores = ValidarArchivo(listaUsuarios);
 
@@ -127,22 +130,22 @@ public class UsuarioController {
             }
 
         } catch (Exception Ex) {
-            return "redirect:/Usuario/CargaMasiva";    
-    }
+            return "redirect:/Usuario/CargaMasiva";
+        }
         return "CargaMasiva";
     }
-    
-    public List<UsuarioDireccion> LecturaArchivoTXT(File archivo){
+
+    public List<UsuarioDireccion> LecturaArchivoTXT(File archivo) {
         List<UsuarioDireccion> listaUsuarios = new ArrayList<>();
-        try(FileReader fileReader = new FileReader(archivo); BufferedReader bufferedReader = new BufferedReader(fileReader);){
-            
-            String linea; 
-            
-            while((linea = bufferedReader.readLine()) !=null){
-                String[] campos = linea.split("\\|"); 
-                
-                UsuarioDireccion usuarioDireccion = new UsuarioDireccion(); 
-                usuarioDireccion.Usuario = new Usuario(); 
+        try (FileReader fileReader = new FileReader(archivo); BufferedReader bufferedReader = new BufferedReader(fileReader);) {
+
+            String linea;
+
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] campos = linea.split("\\|");
+
+                UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
+                usuarioDireccion.Usuario = new Usuario();
                 usuarioDireccion.Usuario.setNombre(campos[0]);
                 usuarioDireccion.Usuario.setApellidoPaterno(campos[1]);
                 usuarioDireccion.Usuario.setApellidoMaterno(campos[2]);
@@ -157,117 +160,113 @@ public class UsuarioController {
                 usuarioDireccion.Usuario.setCelular(campos[9]);
                 usuarioDireccion.Usuario.setCURP(campos[10]);
                 usuarioDireccion.Usuario.setStatus(Integer.parseInt(campos[11]));
-                
+
                 usuarioDireccion.Usuario.Roll = new Roll();
                 usuarioDireccion.Usuario.Roll.setIdRoll(Integer.parseInt(campos[12]));
                 usuarioDireccion.Usuario.Roll.setNombre(campos[13]);
-                
-                usuarioDireccion.Direccion = new Direccion(); 
+
+                usuarioDireccion.Direccion = new Direccion();
                 usuarioDireccion.Direccion.setCalle(campos[14]);
                 usuarioDireccion.Direccion.setNumeroInterior(campos[15]);
                 usuarioDireccion.Direccion.setNumeroExterior(campos[16]);
-                
-                usuarioDireccion.Direccion.Colonia = new Colonia(); 
+
+                usuarioDireccion.Direccion.Colonia = new Colonia();
                 usuarioDireccion.Direccion.Colonia.setIdColonia(Integer.parseInt(campos[17]));
-                
+
                 listaUsuarios.add(usuarioDireccion);
-            }   
-            
-            
-        }catch(Exception Ex){
-            listaUsuarios = null;             
+            }
+
+        } catch (Exception Ex) {
+            listaUsuarios = null;
         }
         return listaUsuarios;
     }
-    
+
     public List<UsuarioDireccion> LecturaArchivoExcel(File archivo) {
         List<UsuarioDireccion> listaUsuarios = new ArrayList<>();
-        try(XSSFWorkbook workbook = new XSSFWorkbook(archivo);){
+        try (XSSFWorkbook workbook = new XSSFWorkbook(archivo);) {
             for (Sheet sheet : workbook) {
-                for(Row row : sheet) {
-                    UsuarioDireccion usuarioDireccion = new UsuarioDireccion(); 
-                    usuarioDireccion.Usuario = new Usuario(); 
+                for (Row row : sheet) {
+                    UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
+                    usuarioDireccion.Usuario = new Usuario();
                     usuarioDireccion.Usuario.setNombre(row.getCell(0).toString());
                     usuarioDireccion.Usuario.setApellidoPaterno(row.getCell(1).toString());
                     usuarioDireccion.Usuario.setApellidoMaterno(row.getCell(2).toString());
-//                    usuarioDireccion.Usuario.setFechaNacimiento(row.getDateCellValue(4).toString);
-                    usuarioDireccion.Usuario.setUserName(row.getCell(3).toString());
-                    usuarioDireccion.Usuario.setEmail(row.getCell(4).toString());
-                    usuarioDireccion.Usuario.setPassword(row.getCell(5).toString());
-                    usuarioDireccion.Usuario.setSexo(row.getCell(6).toString());
-                    usuarioDireccion.Usuario.setTelefono(row.getCell(7).toString());
-                    usuarioDireccion.Usuario.setCelular(row.getCell(8).toString());
-                    usuarioDireccion.Usuario.setCURP(row.getCell(9).toString());
-                    usuarioDireccion.Usuario.setStatus(Integer.parseInt(row.getCell(10).toString()));
-                    
-                    usuarioDireccion.Usuario.Roll = new Roll(); 
-                    usuarioDireccion.Usuario.Roll.setIdRoll(Integer.parseInt(row.getCell(11).toString()));
-                    usuarioDireccion.Usuario.Roll.setNombre(row.getCell(12).toString());
-             
-                    usuarioDireccion.Direccion = new Direccion(); 
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    usuarioDireccion.Usuario.setFechaNacimiento(simpleDateFormat.parse(simpleDateFormat.format(row.getCell(3).getDateCellValue())));
+                    usuarioDireccion.Usuario.setUserName(row.getCell(4).toString());
+                    usuarioDireccion.Usuario.setEmail(row.getCell(5).toString());
+                    usuarioDireccion.Usuario.setPassword(row.getCell(6).toString());
+                    usuarioDireccion.Usuario.setSexo(row.getCell(7).toString());
+                    usuarioDireccion.Usuario.setTelefono(row.getCell(8).toString());
+                    usuarioDireccion.Usuario.setCelular(row.getCell(9).toString());
+                    usuarioDireccion.Usuario.setCURP(row.getCell(10).toString());
+                    usuarioDireccion.Usuario.setStatus(row.getCell(11) != null ? (int) row.getCell(11).getNumericCellValue() : 0);
+                    usuarioDireccion.Usuario.Roll = new Roll();
+                    usuarioDireccion.Usuario.Roll.setIdRoll((int) row.getCell(12).getNumericCellValue());
+
+                    usuarioDireccion.Direccion = new Direccion();
                     usuarioDireccion.Direccion.setCalle(row.getCell(13).toString());
                     usuarioDireccion.Direccion.setNumeroInterior(row.getCell(14).toString());
                     usuarioDireccion.Direccion.setNumeroExterior(row.getCell(15).toString());
+
+                    usuarioDireccion.Direccion.Colonia = new Colonia();
+                    usuarioDireccion.Direccion.Colonia.setIdColonia((int) row.getCell(16).getNumericCellValue());
                     
-                    usuarioDireccion.Direccion.Colonia = new Colonia(); 
-                    usuarioDireccion.Direccion.Colonia.setIdColonia(Integer.parseInt(row.getCell(16).toString()));
-                    usuarioDireccion.Direccion.Colonia.setNombre(row.getCell(17).toString());
-                }  
+                    listaUsuarios.add(usuarioDireccion);
+                }
             }
         } catch (Exception Ex){
             System.out.println("Error al abrir archivo");
         }
-        
+
         return listaUsuarios;
     }
-    
-    
-    public List<ResultFile> ValidarArchivo(List<UsuarioDireccion> listaUsuarios) { 
-        
-        List<ResultFile> listaErrores = new ArrayList<>(); 
-        
-        if(listaUsuarios == null){
-            listaErrores.add(new ResultFile(0, "La lista es nula", "La lista es nula"));            
-        } else if (listaUsuarios.isEmpty()){
-            listaErrores.add(new ResultFile(0,"La lista esta vacia", "La lista esta vacia"));
-        } else { 
-            int fila = 1; 
-            for(UsuarioDireccion usuarioDireccion : listaUsuarios) {
+
+    public List<ResultFile> ValidarArchivo(List<UsuarioDireccion> listaUsuarios) {
+
+        List<ResultFile> listaErrores = new ArrayList<>();
+
+        if (listaUsuarios == null) {
+            listaErrores.add(new ResultFile(0, "La lista es nula", "La lista es nula"));
+        } else if (listaUsuarios.isEmpty()) {
+            listaErrores.add(new ResultFile(0, "La lista esta vacia", "La lista esta vacia"));
+        } else {
+            int fila = 1;
+            for (UsuarioDireccion usuarioDireccion : listaUsuarios) {
                 if (usuarioDireccion.Usuario.getNombre() == null || usuarioDireccion.Usuario.getNombre().equals("")) {
-                   listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getNombre(), "El nombre es un campo obligratorio"));
+                    listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getNombre(), "El campo nombre es obligratorio"));
                 }
-                if (usuarioDireccion.Usuario.getApellidoPaterno() == null || usuarioDireccion.Usuario.getApellidoPaterno().equals("")){
-                   listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getApellidoMaterno(), "El apellido paterno es un campo obligatorio"));
+                if (usuarioDireccion.Usuario.getApellidoPaterno() == null || usuarioDireccion.Usuario.getApellidoPaterno().equals("")) {
+                    listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getApellidoMaterno(), "El campo apellido paterno es obligatorio"));
                 }
 //                if (usuarioDireccion.Usuario.getFechaNacimiento() == null || usuarioDireccion.Usuario.getFechaNacimiento().equals("")){
 //                    listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getFechaNacimiento(), "El campo de fecha de nacimiento es obligatorio"));
 //                }
-                if (usuarioDireccion.Usuario.getUserName() == null || usuarioDireccion.Usuario.getUserName().equals("")){
-                    listaErrores.add(new ResultFile(fila,usuarioDireccion.Usuario.getUserName(),"El campo de username es obligatorio"));
+                if (usuarioDireccion.Usuario.getUserName() == null || usuarioDireccion.Usuario.getUserName().equals("")) {
+                    listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getUserName(), "El campo de username es obligatorio"));
                 }
-                if (usuarioDireccion.Usuario.getEmail() == null || usuarioDireccion.Usuario.getEmail().equals("")){
+                if (usuarioDireccion.Usuario.getEmail() == null || usuarioDireccion.Usuario.getEmail().equals("")) {
                     listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getEmail(), "El campo de email es obligatorio"));
                 }
-                if (usuarioDireccion.Usuario.getPassword() == null || usuarioDireccion.Usuario.getPassword().equals("")){
+                if (usuarioDireccion.Usuario.getPassword() == null || usuarioDireccion.Usuario.getPassword().equals("")) {
                     listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getPassword(), "El campo de password es obligatorio"));
                 }
-                if (usuarioDireccion.Usuario.getSexo() == null || usuarioDireccion.Usuario.getSexo().equals("")){
+                if (usuarioDireccion.Usuario.getSexo() == null || usuarioDireccion.Usuario.getSexo().equals("")) {
                     listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getSexo(), "El campo sexo es obligatorio"));
                 }
-                if (usuarioDireccion.Usuario.getTelefono() == null || usuarioDireccion.Usuario.getTelefono().equals("")){
+                if (usuarioDireccion.Usuario.getTelefono() == null || usuarioDireccion.Usuario.getTelefono().equals("")) {
                     listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getTelefono(), "El campo telefono es obligatorio"));
                 }
-                if (usuarioDireccion.Usuario.getCelular() == null || usuarioDireccion.Usuario.getCelular().equals("")){
+                if (usuarioDireccion.Usuario.getCelular() == null || usuarioDireccion.Usuario.getCelular().equals("")) {
                     listaErrores.add(new ResultFile(fila, usuarioDireccion.Usuario.getCelular(), "El campo celular es obligatorio"));
-                } 
+                }
                 fila++;
             }
         }
         return listaErrores;
     }
-    
-    
-    
+
     @PostMapping("/GetAllDinamico")
     public String BusquedaDinamica(@ModelAttribute Usuario usuario, Model model) {
         Result result = usuarioDAOImplementation.GetAllDinamico(usuario);

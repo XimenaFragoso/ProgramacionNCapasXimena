@@ -1,70 +1,69 @@
-package com.example.ProgromacionNCapasXimena.ML;
+package com.example.ProgromacionNCapasXimena.JPA;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
-
+@Entity
 public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idusuario")
     private int IdUsuario;
     
-    //Notaciones de Validacion
-//    @NotNull(message = "El campo nombre no puede ser NULL")
-//    @Size(min = 4, max = 30, message = "El rango de caracteres es de 04 a 30")
+    @Column(name = "nombre")
     private String Nombre;
     
-//    @NotNull(message = "El campo ApellidoPaterno no puede ser NULL")
-//    @Size(min = 4, max = 30, message = "El rango de caracteres es de 04 a 30")
+    @Column(name = "apellidopaterno")
     private String ApellidoPaterno;
-        
-//    @Size(min = 4, max = 30, message = "El rango de caracteres es de 04 a 30")
+
+    @Column(name = "apellidomaterno")
     private String ApellidoMaterno;
     
-//    @NotNull(message = "El campo FechaNacimiento no puede ser NULL")
-    @Past
+    @Column(name = "fechanacimiento")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date FechaNacimiento;
 
-//    @NotNull(message = "El campo UserName no puede ser NULL")
-//    @Size(min = 4, max = 50, message = "El rango de caracteres es de 04 a 50")
-    private String UserName; 
+    @Column(name = "username")
+    private String UserName;
     
-//    @Email(message = "user.email.mask")
-//    @NotNull(message = "El campo Email no puede ser NULL")
-    private String Email; 
-    
-//    @Size(min = 8, max = 10, message = "El rango min de caracteres es de 8 y el max de 10")
+    @Column(name = "email")
+    private String Email;
+
+    @Column(name = "password")
     private String Password;
     
-//    @NotNull(message = "El campo sexo no puede ser NULL")
-//    @Size(min = 1,max =1, message = "Solo puedes ingresar una 'M' O 'F'")
+    @Column(name = "sexo")
     private String Sexo;
-    
-//    @NotNull(message = "El campo telefono no puede ser NULL")
-//    @Size(min = 10, max = 12, message = "El rango min de numeros es de 10 y el max de 12")
-    private String Telefono; 
-    
-//    @NotNull(message = "El campo celular no puede ser NULL")        
-//    @Size(min = 10, max = 12, message = "El rango min de numeros es de 10 y el max de 12")
-    private String Celular; 
 
+    @Column(name = "telefono")
+    private String Telefono;
+
+    @Column(name = "celular")
+    private String Celular;
+
+    @Column(name = "curp")
     private String CURP;
-    
+
+    @Lob
+    @Column(name = "imagen")
     private String Imagen;
-    
-    private int Status; 
-    
-    @Valid
-    public Roll Roll; 
-    
-    public Usuario(){       
+
+    @Column(name = "status")
+    private int Status;
+
+    @JoinColumn(name = "idroll")
+    @ManyToOne
+    public Roll Roll;
+
+    public Usuario() {
     }
 
     public int getIdUsuario() {
@@ -170,24 +169,22 @@ public class Usuario {
     public void setRoll(Roll Roll) {
         this.Roll = Roll;
     }
-    
-    public String getImagen(){
-        return Imagen; 
+
+    public String getImagen() {
+        return Imagen;
     }
-    
-    public void setImagen(String Imagen){
-        this.Imagen = Imagen; 
+
+    public void setImagen(String Imagen) {
+        this.Imagen = Imagen;
     }
-    
-    public int getStatus(){
-        return Status; 
+
+    public int getStatus() {
+        return Status;
     }
-    
-    public void setStatus(int Status){
+
+    public void setStatus(int Status) {
         this.Status = Status;
     }
-    
+
 }
-
-
 

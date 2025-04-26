@@ -1,13 +1,30 @@
-package com.example.ProgromacionNCapasXimena.ML;
 
-import java.util.Date;
-import org.springframework.format.annotation.DateTimeFormat;
+package com.example.ProgromacionNCapasXimena.JPA;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+@Entity
 public class Colonia {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idcolonia")
     private int IdColonia; 
-    private String Nombre; 
-    private String CodigoPostal; 
+    
+    @Column(name = "nombre")
+    private String Nombre;
+    
+    @Column(name = "codigopostal")
+    private String CodigoPostal;
+    
+    @JoinColumn(name = "idmunicipio")
+    @ManyToOne
     public Municipio Municipio; 
 
     public int getIdColonia() {
@@ -41,5 +58,4 @@ public class Colonia {
     public void setMunicipio(Municipio Municipio) {
         this.Municipio = Municipio;
     }
-    
 }

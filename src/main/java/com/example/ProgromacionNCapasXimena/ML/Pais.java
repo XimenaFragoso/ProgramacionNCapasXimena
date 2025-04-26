@@ -1,8 +1,5 @@
 package com.example.ProgromacionNCapasXimena.ML;
 
-import java.util.Date;
-import org.springframework.format.annotation.DateTimeFormat;
-
 public class Pais {
     
     private int IdPais; 
@@ -24,7 +21,5 @@ public class Pais {
     public void setNombre(String Nombre) {
         this.Nombre = Nombre;
     }
-    
-    
-    
+ 
 }

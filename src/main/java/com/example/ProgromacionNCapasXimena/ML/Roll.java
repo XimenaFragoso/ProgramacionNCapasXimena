@@ -1,10 +1,5 @@
 package com.example.ProgromacionNCapasXimena.ML;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.util.Date;
-import org.springframework.format.annotation.DateTimeFormat;
-
 public class Roll {
     
     private int IdRoll;    

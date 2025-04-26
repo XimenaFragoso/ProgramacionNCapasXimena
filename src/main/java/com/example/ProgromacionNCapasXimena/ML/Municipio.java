@@ -1,8 +1,5 @@
 package com.example.ProgromacionNCapasXimena.ML;
 
-import java.util.Date;
-import org.springframework.format.annotation.DateTimeFormat;
-
 public class Municipio {
     
     private int IdMunicipio; 

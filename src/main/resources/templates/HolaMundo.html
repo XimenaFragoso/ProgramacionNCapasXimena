@@ -71,7 +71,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 </thead>
                 <tbody>
                     <tr th:each="usuarioDireccion : ${listaUsuario}">
-                        <td><a class="btn p-3" th:href="@{/Usuario/Form/{IdUsuario}(IdUsuario = ${usuarioDireccion.Usuario.IdUsuario})}"><i class="bi bi-pencil-fill" style="color:green"></i></a></td>
+                        <td><a class="btn p-3" th:href="@{/Usuario/Form/{IdUsuario}(IdUsuario = ${usuarioDireccion.Usuario.IdUsuario})}"><i class="bi bi-pencil-fill" style="font-size:2em; color:green"></i></a></td>
                         <th><img id="previewImage" style="max-width: 50px; max-height: auto" class="mx-auto" th:src="${usuarioDireccion.Usuario.Imagen != null} ? 'data:image/png;base64,' + ${usuarioDireccion.Usuario.Imagen} : 'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png'"/></th>
 
                         <td th:text="|${usuarioDireccion.Usuario.Nombre} ${usuarioDireccion.Usuario.ApellidoPaterno} ${usuarioDireccion.Usuario.ApellidoMaterno}|"></td>
@@ -93,7 +93,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <label class="form-check-label" for="flexSwitchCheckChecked"></label>
                             </div>
                         </td>
-                        <td><a  class="btn" th:href="@{/Usuario/UsuarioDelete(IdUsuario = ${usuarioDireccion.Usuario.IdUsuario})}"><i class="bi bi-trash" style="color:red"></i></a></td>
+                        <td><a  class="btn" th:href="@{/Usuario/UsuarioDelete(IdUsuario = ${usuarioDireccion.Usuario.IdUsuario})}"><i class="bi bi-trash" style="font-size:2em; color:red"></i></a></td>
 
                     </tr>   
                 </tbody>

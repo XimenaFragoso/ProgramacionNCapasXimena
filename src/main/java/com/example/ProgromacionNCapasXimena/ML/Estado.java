@@ -31,5 +31,4 @@ public class Estado {
     public void setNombre(String Nombre){
         this.Nombre = Nombre;
     }
-    
 }

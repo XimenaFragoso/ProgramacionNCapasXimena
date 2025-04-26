@@ -74,6 +74,7 @@ public class UsuarioController {
     public String Index(Model model) {
 
         Result result = usuarioDAOImplementation.GetAll();
+        Result resultJPA = usuarioDAOImplementation.GetAllJPA();
         Result resultRoll = RollDAOImplementation.GetAll();
         Usuario usuarioBusqueda = new Usuario();
         usuarioBusqueda.Roll = new Roll();
@@ -90,9 +91,6 @@ public class UsuarioController {
         return "CargaMasiva";
     }
 
-    
-    
-    
     @PostMapping("/CargaMasiva")
     public String CargaMasiva(@RequestParam MultipartFile archivo, Model model, HttpSession session) {
         try {
@@ -212,11 +210,11 @@ public class UsuarioController {
 
                     usuarioDireccion.Direccion.Colonia = new Colonia();
                     usuarioDireccion.Direccion.Colonia.setIdColonia((int) row.getCell(16).getNumericCellValue());
-                    
+
                     listaUsuarios.add(usuarioDireccion);
                 }
             }
-        } catch (Exception Ex){
+        } catch (Exception Ex) {
             System.out.println("Error al abrir archivo");
         }
 
@@ -347,7 +345,7 @@ public class UsuarioController {
     }
 
     @PostMapping("Form")
-    //
+    //agregar, actualizar
     public String Form(@Valid @ModelAttribute UsuarioDireccion usuarioDireccion, BindingResult BindingResult, @RequestParam(required = false) MultipartFile imagenFile, Model model) {
 //Se quita el campo roll ya que al momento de inicializarse se pierden los datos ya que venian llenos
 //        usuarioDireccion.Usuario.Roll = new Roll();
@@ -369,13 +367,16 @@ public class UsuarioController {
 
         if (usuarioDireccion.Usuario.getIdUsuario() == 0) {
             System.out.println("Agregando nuevo usuario y direccion");
-            usuarioDAOImplementation.Add(usuarioDireccion);
+//             usuarioDAOImplementation.Add(usuarioDireccion);
+            usuarioDAOImplementation.AddJPA(usuarioDireccion);
         } else {
             if (usuarioDireccion.Direccion.getIdDireccion() == -1) {
                 usuarioDAOImplementation.UpdateUsuario(usuarioDireccion.Usuario);
                 System.out.println("Actualizando usuario");
             } else if (usuarioDireccion.Direccion.getIdDireccion() == 0) {
-                DireccionDAOImplementation.DireccionAdd(usuarioDireccion);
+//                DireccionDAOImplementation.DireccionAdd(usuarioDireccion);
+                DireccionDAOImplementation.DireccionAddJPA(usuarioDireccion);
+
                 System.out.println("Agregar Direccion");
             } else {
                 System.out.println("actualizando direccion");
@@ -387,21 +388,23 @@ public class UsuarioController {
     //eliminar usuario desde la tabla de usuario
     @GetMapping("/UsuarioDelete")
     public String UsuarioDelete(@RequestParam int IdUsuario) {
-        usuarioDAOImplementation.UsuarioDelete(IdUsuario);
+        usuarioDAOImplementation.UsuarioDeleteJPA(IdUsuario);
+//        usuarioDAOImplementation.UsuarioDelete(IdUsuario);
         return "redirect:/Usuario";
     }
 
     //eliminar direccion desde la tabla de detalles de direcciones
     @GetMapping("/DireccionDelete")
     public String DireccionDelete(@RequestParam int IdDireccion) {
-        DireccionDAOImplementation.DireccionDelete(IdDireccion);
+        DireccionDAOImplementation.DireccionDeletJPA(IdDireccion);
+//        DireccionDAOImplementation.DireccionDelete(IdDireccion);
         return "redirect:/Usuario";
     }
 
 //    @GetMapping("Add")
 //    public String Form(){
 //        return "Formulario"; 
-//    }  
+//    }
     @GetMapping("EstadoByIdPais/{IdPais}")
     @ResponseBody
     public Result EstadoByIdPais(@PathVariable int IdPais) {

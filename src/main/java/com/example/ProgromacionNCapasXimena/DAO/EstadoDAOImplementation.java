@@ -1,12 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.example.ProgromacionNCapasXimena.DAO;
 import com.example.ProgromacionNCapasXimena.ML.Pais;
 import com.example.ProgromacionNCapasXimena.ML.Estado;
 import com.example.ProgromacionNCapasXimena.ML.Result;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.sql.ResultSet;
+import java.util.List;
 import java.sql.Types;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,9 @@ public class EstadoDAOImplementation implements IEstadoDAO{
     
     @Autowired 
     private JdbcTemplate jdbcTemplate; 
+    
+    @Autowired
+    private EntityManager entityManager;
     
     @Override
     public Result EstadoByIdPais(int IdPais){
@@ -55,6 +57,36 @@ public class EstadoDAOImplementation implements IEstadoDAO{
             result.ex =  ex;           
         }
         return result; 
+    }
+
+    @Override
+    public Result EstadoByIdPaisJPA(int IdPais) {
+        
+        Result result = new Result();
+        
+        try {
+            TypedQuery<com.example.ProgromacionNCapasXimena.JPA.Estado> queryEstado = entityManager.createQuery("FROM Estado WHERE Pais.IdPais = :idpais", com.example.ProgromacionNCapasXimena.JPA.Estado.class);
+            queryEstado.setParameter("idpais", IdPais);
+            List<com.example.ProgromacionNCapasXimena.JPA.Estado> estadosJPA = queryEstado.getResultList();
+            
+            result.objects = new ArrayList(); 
+            for (com.example.ProgromacionNCapasXimena.JPA.Estado estadoJPA : estadosJPA) {
+                Estado estado = new Estado(); 
+                estado.setIdEstado(estadoJPA.getIdEstado());
+                estado.setNombre(estadoJPA.getNombre());
+                
+                result.objects.add(estado);
+            }
+            
+            result.correct = true;
+            
+        } catch (Exception Ex) {
+            result.object = false; 
+            result.errorMessage = Ex.getLocalizedMessage(); 
+            result.ex = Ex; 
+            
+        }
+        return result;
     }
     
     

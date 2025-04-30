@@ -120,6 +120,7 @@ public class UsuarioController {
                 if (listaErrores.isEmpty()) {
                     //Procesar archivo
                     session.setAttribute("urlFile", absolutePath);
+                    session.setAttribute("tipoArchivo", tipoArchivo);
                     model.addAttribute("listaErrores", listaErrores);
                 } else {
                     //Se muestra tabla de errores 
@@ -131,6 +132,24 @@ public class UsuarioController {
             return "redirect:/Usuario/CargaMasiva";
         }
         return "CargaMasiva";
+    }
+
+    public String Procesar(HttpSession session) {
+        String absolutePath = session.getAttribute("urlFile").toString();
+        String tipoArchivo = session.getAttribute("tipoArchivo").toString();
+        List<UsuarioDireccion> listaUsuarios = new ArrayList<>();
+
+        if (tipoArchivo.equals("txt")) {
+            listaUsuarios = LecturaArchivoTXT(new File(absolutePath));
+        } else {
+            listaUsuarios = LecturaArchivoExcel(new File(absolutePath));
+        }
+
+        for (UsuarioDireccion usuarioDireccion : listaUsuarios) {
+            usuarioDAOImplementation.Add(usuarioDireccion);
+        }
+        return "/CargaMasiva";
+
     }
 
     public List<UsuarioDireccion> LecturaArchivoTXT(File archivo) {
@@ -408,7 +427,7 @@ public class UsuarioController {
     @GetMapping("EstadoByIdPais/{IdPais}")
     @ResponseBody
     public Result EstadoByIdPais(@PathVariable int IdPais) {
-        Result result = EstadoDAOImplementation.EstadoByIdPais(IdPais);
+        Result result = EstadoDAOImplementation.EstadoByIdPaisJPA(IdPais);
 
         return result;
     }
@@ -416,7 +435,7 @@ public class UsuarioController {
     @GetMapping("MunicipioByIdEstado/{IdEstado}")
     @ResponseBody
     public Result MunicipioByIdEstado(@PathVariable int IdEstado) {
-        Result result = MunicipioDAOImplementation.MunicipioByIdEstado(IdEstado);
+        Result result = MunicipioDAOImplementation.MunicipioByIdEstadoJPA(IdEstado);
 
         return result;
     }
@@ -424,7 +443,7 @@ public class UsuarioController {
     @GetMapping("ColoniaByIdMunicipio/{IdMunicipio}")
     @ResponseBody
     public Result ColoniaByIdMunicipio(@PathVariable int IdMunicipio) {
-        Result result = ColoniaDAOImplementation.ColoniaByIdMunicipio(IdMunicipio);
+        Result result = ColoniaDAOImplementation.ColoniaByIdMunicipioJPA(IdMunicipio);
 
         return result;
     }

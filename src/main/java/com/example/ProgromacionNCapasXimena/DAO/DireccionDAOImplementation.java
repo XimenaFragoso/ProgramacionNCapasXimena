@@ -209,7 +209,7 @@ public class DireccionDAOImplementation implements IDireccionDAO {
         return result;
 
     }
-    
+
     @Transactional
     @Override
     public Result DireccionDeletJPA(int IdDireccion) {
@@ -217,11 +217,11 @@ public class DireccionDAOImplementation implements IDireccionDAO {
 
         try {
             com.example.ProgromacionNCapasXimena.JPA.Direccion Direccion = entityManager.find(com.example.ProgromacionNCapasXimena.JPA.Direccion.class, IdDireccion);
-                    
+
             entityManager.remove(Direccion);
-           
+
             return result;
-            
+
         } catch (Exception Ex) {
             result.correct = false;
             result.errorMessage = Ex.getLocalizedMessage();
@@ -230,6 +230,67 @@ public class DireccionDAOImplementation implements IDireccionDAO {
 
         return result;
 
+    }
+
+    @Transactional
+    @Override   
+    public Result UpdateDireccionJPA(Direccion direccion) {
+        
+        Result result = new Result();
+        
+        try{
+            com.example.ProgromacionNCapasXimena.JPA.Direccion direccionJPA = new com.example.ProgromacionNCapasXimena.JPA.Direccion(); 
+            direccionJPA = entityManager.find(com.example.ProgromacionNCapasXimena.JPA.Direccion.class, direccion.getIdDireccion());
+            
+            direccionJPA.setCalle(direccion.getCalle());
+            direccionJPA.setNumeroInterior(direccion.getNumeroInterior());
+            direccionJPA.setNumeroExterior(direccion.getNumeroExterior());
+            
+            direccionJPA.Colonia = new com.example.ProgromacionNCapasXimena.JPA.Colonia(); 
+            direccionJPA.Colonia.setIdColonia(direccion.Colonia.getIdColonia());
+            
+            direccionJPA.Colonia.Municipio = new com.example.ProgromacionNCapasXimena.JPA.Municipio(); 
+            direccionJPA.Colonia.Municipio.setIdMunicipio(direccion.Colonia.Municipio.getIdMunicipio());
+            
+            direccionJPA.Colonia.Municipio.Estado = new com.example.ProgromacionNCapasXimena.JPA.Estado(); 
+            direccionJPA.Colonia.Municipio.Estado.setIdEstado(direccion.Colonia.Municipio.Estado.getIdEstado());
+            
+            direccionJPA.Colonia.Municipio.Estado.Pais = new com.example.ProgromacionNCapasXimena.JPA.Pais();
+            direccionJPA.Colonia.Municipio.Estado.Pais.setIdPais(direccion.Colonia.Municipio.Estado.Pais.getIdPais());
+            
+            entityManager.merge(direccionJPA);
+            
+        }catch (Exception Ex) {
+            result.correct = false; 
+            result.errorMessage = Ex.getLocalizedMessage();
+            result.ex = Ex;
+            
+        }
+        
+        return result;
+        
+    }
+ 
+    @Override
+    public Result GetByIdDireccionJPA(int IdDireccion) {
+        Result result = new Result(); 
+        try{
+            com.example.ProgromacionNCapasXimena.JPA.Direccion direccionById = new com.example.ProgromacionNCapasXimena.JPA.Direccion(); 
+            TypedQuery<com.example.ProgromacionNCapasXimena.JPA.Direccion> queryDireccion = entityManager.createQuery("FROM Direccion WHERE Direccion.IdDireccion = :iddireccion", com.example.ProgromacionNCapasXimena.JPA.Direccion.class); 
+            
+            List<com.example.ProgromacionNCapasXimena.JPA.Direccion> direccionesJPA = queryDireccion.getResultList();
+            direccionById = entityManager.find(com.example.ProgromacionNCapasXimena.JPA.Direccion.class, IdDireccion); 
+            
+            
+            
+            //recuperar las direcciones
+        }catch(Exception Ex){
+            result.correct = false; 
+            result.errorMessage = Ex.getLocalizedMessage(); 
+            result.ex = Ex;
+            
+        }
+        return result;
     }
 
 }

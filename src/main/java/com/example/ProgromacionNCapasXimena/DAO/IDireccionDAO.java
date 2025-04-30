@@ -18,4 +18,7 @@ public interface IDireccionDAO {
     
     Result DireccionDeletJPA(int IdDireccion);
 
+    Result UpdateDireccionJPA(Direccion direccion); 
+    
+    Result GetByIdDireccionJPA(int IdDireccion);
 }

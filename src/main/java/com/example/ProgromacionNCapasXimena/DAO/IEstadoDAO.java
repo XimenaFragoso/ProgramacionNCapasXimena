@@ -7,4 +7,6 @@ public interface IEstadoDAO {
 
     Result EstadoByIdPais(int IdPais); 
     
+    Result EstadoByIdPaisJPA(int IdPais);
+    
 }

@@ -293,8 +293,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
 
     //Sirve para ver la direccion por usuario en la tabla de Direcciones 
     @Override
-    public Result DireccionById(int IdUsuario
-    ) {
+    public Result DireccionById(int IdUsuario) {
         Result result = new Result();
         try {
             jdbcTemplate.execute("{CALL DireccionByIdUsuario(?,?,?)}", (CallableStatementCallback<Integer>) callableStatement -> {
@@ -368,12 +367,17 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
 
                     usuarioDireccion.Usuario = new Usuario();
                     usuarioDireccion.Usuario.setIdUsuario(resultSet.getInt("IdUsuario"));
-                    usuarioDireccion.Usuario.setNombre(resultSet.getString("NombreUsuario"));
+                    usuarioDireccion.Usuario.setNombre(resultSet.getString("nombreUsuario"));
                     usuarioDireccion.Usuario.setApellidoPaterno(resultSet.getString("ApellidoPaterno"));
                     usuarioDireccion.Usuario.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));
+                    usuarioDireccion.Usuario.setFechaNacimiento(resultSet.getDate("FechaNacimiento"));
+                    usuarioDireccion.Usuario.setUserName(resultSet.getString("UserName"));
+                    usuarioDireccion.Usuario.setEmail(resultSet.getString("Email"));
+                    usuarioDireccion.Usuario.setPassword(resultSet.getString("Password"));
+                    usuarioDireccion.Usuario.setSexo(resultSet.getString("Sexo"));
                     usuarioDireccion.Usuario.setTelefono(resultSet.getString("Telefono"));
                     usuarioDireccion.Usuario.setCelular(resultSet.getString("Celular"));
-                    usuarioDireccion.Usuario.setEmail(resultSet.getString("Email"));
+                    usuarioDireccion.Usuario.setCURP(resultSet.getString("CURP"));
                     usuarioDireccion.Usuario.setImagen(resultSet.getString("Imagen"));
 
                     usuarioDireccion.Usuario.Roll = new Roll();
@@ -401,7 +405,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
         Result result = new Result();
 
         try {
-            jdbcTemplate.execute("CALL UsuarioUpdate(?,?,?,?,?,?,?,?,?,?,?,?,?)", (CallableStatementCallback<Integer>) callableStatement -> {
+            jdbcTemplate.execute("{CALL UsuarioUpdate(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}", (CallableStatementCallback<Integer>) callableStatement -> {
                 callableStatement.setInt(1, usuario.getIdUsuario());
                 callableStatement.setString(2, usuario.getNombre());
                 callableStatement.setString(3, usuario.getApellidoPaterno());
@@ -413,8 +417,10 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
                 callableStatement.setString(9, usuario.getSexo());
                 callableStatement.setString(10, usuario.getTelefono());
                 callableStatement.setString(11, usuario.getCelular());
-                callableStatement.setString(12, usuario.getCURP());
-                callableStatement.setInt(13, usuario.Roll.getIdRoll());
+                callableStatement.setInt(12, usuario.getStatus());
+                callableStatement.setString(13, usuario.getImagen());
+                callableStatement.setString(14, usuario.getCURP());
+                callableStatement.setInt(15, usuario.Roll.getIdRoll());
 
                 int rowsAffected = callableStatement.executeUpdate();
 
@@ -551,7 +557,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
     //merge actualiza con id != 0
     //merge agrega con id == 0
     //entityManager.remove(alumno);
-    @Transactional // 
+    @Transactional
     @Override
     public Result AddJPA(UsuarioDireccion usuarioDireccion) {
 
@@ -640,13 +646,119 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
                     = entityManager.find(com.example.ProgromacionNCapasXimena.JPA.Usuario.class, IdUsuario);
 
             entityManager.remove(usuarioJPA);
-           
+
             return result;
 
         } catch (Exception Ex) {
             result.object = false;
             result.errorMessage = Ex.getLocalizedMessage();
             result.ex = Ex;
+
+        }
+        return result;
+
+    }
+
+    @Transactional
+    @Override
+    public Result UpdateUsuarioJPA(Usuario usuario) {
+
+        Result result = new Result();
+
+        try {
+            com.example.ProgromacionNCapasXimena.JPA.Usuario usuarioJPA = new com.example.ProgromacionNCapasXimena.JPA.Usuario();
+            usuarioJPA = entityManager.find(com.example.ProgromacionNCapasXimena.JPA.Usuario.class, usuario.getIdUsuario());
+
+            //se vacea el usuario ML al usuario JPA
+            usuarioJPA.setNombre(usuario.getNombre());
+            usuarioJPA.setApellidoPaterno(usuario.getApellidoPaterno());
+            usuarioJPA.setApellidoMaterno(usuario.getApellidoMaterno());
+            usuarioJPA.setFechaNacimiento(usuario.getFechaNacimiento());
+            usuarioJPA.setUserName(usuario.getUserName());
+            usuarioJPA.setEmail(usuario.getEmail());
+            usuarioJPA.setPassword(usuario.getPassword());
+            usuarioJPA.setSexo(usuario.getSexo());
+            usuarioJPA.setTelefono(usuario.getTelefono());
+            usuarioJPA.setCelular(usuario.getCelular());
+            usuarioJPA.setCURP(usuario.getCURP());
+            usuarioJPA.setStatus(usuario.getStatus());
+            usuarioJPA.setImagen(usuario.getImagen());
+
+            usuarioJPA.Roll = new com.example.ProgromacionNCapasXimena.JPA.Roll();
+            usuarioJPA.Roll.setIdRoll(usuario.Roll.getIdRoll());
+
+            //
+            entityManager.merge(usuarioJPA);
+
+        } catch (Exception Ex) {
+            result.object = false;
+            result.errorMessage = Ex.getLocalizedMessage();
+            result.ex = Ex;
+        }
+        return result;
+    }
+
+    //busqueda dinamica
+    @Override
+    public Result GetAllDinamicoJPA(Usuario usuario) {
+        Result result = new Result();
+        try {
+            //nombre, apellido paterno, apellido materno, roll, status
+
+            String queryDinamico = "FROM Usuario";
+
+            queryDinamico = queryDinamico + "WHERE Nombre = :nombre ";
+            queryDinamico = queryDinamico + "AND ApellidoPaterno = :apellidopaterno";
+            queryDinamico = queryDinamico + "AND ApellidoMaterno = :apellidomaterno";
+
+            TypedQuery<com.example.ProgromacionNCapasXimena.JPA.Usuario> queryUsuario = entityManager.createQuery(queryDinamico, com.example.ProgromacionNCapasXimena.JPA.Usuario.class);
+            queryUsuario.setParameter(":nombre", usuario.getNombre());
+            queryUsuario.setParameter(":apellidopaterno", usuario.getApellidoPaterno());
+            queryUsuario.setParameter(":apellidomaterno", usuario.getApellidoMaterno());
+
+            List<com.example.ProgromacionNCapasXimena.JPA.Usuario> usuarios = queryUsuario.getResultList();
+
+            result.correct = true;
+
+        } catch (Exception Ex) {
+            result.object = false;
+            result.errorMessage = Ex.getLocalizedMessage();
+            result.ex = Ex;
+
+        }
+
+        return result;
+    }
+
+    @Override
+    public Result GetByIdJPA(int IdUsuario) {
+
+        Result result = new Result();
+
+        try {
+            com.example.ProgromacionNCapasXimena.JPA.Usuario usuarioById = new com.example.ProgromacionNCapasXimena.JPA.Usuario();
+            TypedQuery<com.example.ProgromacionNCapasXimena.JPA.Usuario> queryUsuarioById = entityManager.createQuery("FROM Usuario WHERE Usuario.IdUsuario = :idusuario", com.example.ProgromacionNCapasXimena.JPA.Usuario.class);
+
+            List<com.example.ProgromacionNCapasXimena.JPA.Usuario> usuariosJPA = queryUsuarioById.getResultList();
+            usuarioById = entityManager.find(com.example.ProgromacionNCapasXimena.JPA.Usuario.class, IdUsuario);
+
+        } catch (Exception Ex) {
+            result.object = false;
+            result.errorMessage = Ex.getLocalizedMessage();
+            result.ex = Ex;
+        }
+        return result;
+    }
+
+    @Override
+    public Result DireccionByIdJPA(int IdUsuario) {
+        Result result = new Result();
+
+        try {
+            com.example.ProgromacionNCapasXimena.JPA.Usuario DireccionByIdUsuario = new com.example.ProgromacionNCapasXimena.JPA.Usuario();
+            TypedQuery<com.example.ProgromacionNCapasXimena.JPA.Usuario> querydireccionByIdUsuario = entityManager.createQuery("FROM Direccion WHERE Direccion.IdUsuario = :idusuario", com.example.ProgromacionNCapasXimena.JPA.Usuario.class);
+
+        } catch (Exception Ex) {
 
         }
         return result;

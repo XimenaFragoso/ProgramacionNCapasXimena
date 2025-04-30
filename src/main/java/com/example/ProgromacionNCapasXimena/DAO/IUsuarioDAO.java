@@ -10,6 +10,7 @@ public interface IUsuarioDAO {
 
     Result Add(UsuarioDireccion usuarioDireccion);
 
+    //////
     Result DireccionById(int IdUsuario);
 
     Result GetById(int IdUsuario);
@@ -25,5 +26,13 @@ public interface IUsuarioDAO {
     Result AddJPA(UsuarioDireccion usuarioDireccion);
     
     Result UsuarioDeleteJPA(int IdUsuario);
+    
+    Result UpdateUsuarioJPA(Usuario usuario);
+    
+    Result GetAllDinamicoJPA(Usuario usuario); 
+    
+    Result GetByIdJPA(int IdUsuario); 
+    
+    Result DireccionByIdJPA(int IdUsuario); 
     
 }

@@ -18,6 +18,7 @@ import java.util.List;
 public class PaisDAOImplementation implements IPaisDAO{
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    
     @Override 
     public Result GetAll(){
         Result result = new Result(); 
@@ -47,6 +48,17 @@ public class PaisDAOImplementation implements IPaisDAO{
         }
         
             return result; 
+    }
+
+    @Override
+    public Result GetAllJPA() {
+        Result result = new Result(); 
+        
+        try {
+            
+        } catch (Exception ex) {
+        }
+        return result;
     }
     
 }

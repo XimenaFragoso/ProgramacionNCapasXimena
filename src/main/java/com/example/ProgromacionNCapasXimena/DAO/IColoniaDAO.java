@@ -7,4 +7,6 @@ public interface IColoniaDAO {
     
     Result ColoniaByIdMunicipio(int IdMunicipio);
     
+    Result ColoniaByIdMunicipioJPA(int IdMunicipio);
+    
 }

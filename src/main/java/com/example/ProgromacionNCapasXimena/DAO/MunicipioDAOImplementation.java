@@ -1,28 +1,27 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.example.ProgromacionNCapasXimena.DAO;
 
 import com.example.ProgromacionNCapasXimena.ML.Municipio;
 import com.example.ProgromacionNCapasXimena.ML.Result;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.sql.ResultSet;
 import java.sql.Types;
+import java.util.List;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-/**
- *
- * @author Alien 3 P9
- */
+
 @Repository
 public class MunicipioDAOImplementation implements IMunicipioDAO {
 
     @Autowired 
     private JdbcTemplate jdbcTemplate; 
+    
+    @Autowired
+    private EntityManager entityManager;
     
     @Override
     public Result MunicipioByIdEstado(int IdEstado) {
@@ -60,6 +59,32 @@ public class MunicipioDAOImplementation implements IMunicipioDAO {
             
         }
 
+        return result; 
+    }
+
+    @Override
+    public Result MunicipioByIdEstadoJPA(int IdEstado) {
+        Result result = new Result(); 
+        
+        try {
+            TypedQuery<com.example.ProgromacionNCapasXimena.JPA.Municipio> queryMunicipio = entityManager.createQuery("FROM Municipio WHERE Estado.IdEstado = :idestado", com.example.ProgromacionNCapasXimena.JPA.Municipio.class);
+            queryMunicipio.setParameter("idestado", IdEstado);
+            List<com.example.ProgromacionNCapasXimena.JPA.Municipio> municipiosJPA = queryMunicipio.getResultList();
+
+            result.objects = new ArrayList<>();
+            for (com.example.ProgromacionNCapasXimena.JPA.Municipio municipioJPA : municipiosJPA) {
+                Municipio municipio = new Municipio(); 
+                municipio.setIdMunicipio(municipioJPA.getIdMunicipio());
+                municipio.setNombre(municipioJPA.getNombre());
+                
+                result.objects.add(municipio);
+            }
+            
+        }catch(Exception Ex){
+            result.object = false; 
+            result.errorMessage = Ex.getLocalizedMessage(); 
+            result.ex = Ex;
+        }
         return result; 
     }
 }
